@@ -59,13 +59,11 @@ export function removeMetric (metricID) {
 export const fetchMetrics = (callbacks = {}) => {
   return async dispatch => {
     try {
-      const json = await sendRequest(apiURL + 'metrics', {
+      const json = await sendRequest(apiURL + 'public-metrics', {
         headers: buildHeaders()
       }, callbacks)
       dispatch(listMetrics(json))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }
@@ -76,8 +74,6 @@ export const fetchPublicMetrics = (callbacks = {}) => {
       const json = await sendRequest(apiURL + 'public-metrics', {}, callbacks)
       dispatch(listMetrics(json))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }
@@ -90,8 +86,6 @@ export const fetchExternalMetrics = (metricsType, callbacks = {}) => {
       }, callbacks)
       dispatch(listExternalMetrics(metricsType, json))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }
@@ -107,8 +101,6 @@ export const postMetric = (type, props, title, status, unit, description, callba
       }, callbacks)
       dispatch(addMetric(json))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }
@@ -124,8 +116,6 @@ export const updateMetric = (metricID, type, props, title, status, unit, descrip
       }, callbacks)
       dispatch(editMetric(json))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }
@@ -139,8 +129,6 @@ export const deleteMetric = (metricID, callbacks = {}) => {
       }, callbacks)
       dispatch(removeMetric(metricID))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }
@@ -154,8 +142,6 @@ export const fetchMetricsData = (metricID, year, month, date, callbacks = {}) =>
         dispatch(listMetricsData(metricID, year, month, date, respBody))
       }
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }

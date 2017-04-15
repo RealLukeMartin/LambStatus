@@ -50,8 +50,6 @@ export const fetchMaintenances = (callbacks = {}) => {
       const json = await sendRequest(apiURL + 'maintenances', {}, callbacks)
       dispatch(listMaintenances(json))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }
@@ -62,8 +60,6 @@ export const fetchMaintenanceUpdates = (maintenanceID, callbacks = {}) => {
       const json = await sendRequest(apiURL + 'maintenances/' + maintenanceID + '/maintenanceupdates', {}, callbacks)
       dispatch(listMaintenanceUpdates(json, maintenanceID))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }
@@ -79,8 +75,6 @@ export const postMaintenance = (name, maintenanceStatus, startAt, endAt, message
       }, callbacks)
       dispatch(addMaintenance(json))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }
@@ -97,8 +91,6 @@ export const updateMaintenance = (maintenanceID, name, maintenanceStatus, startA
       }, callbacks)
       dispatch(editMaintenance(json))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }
@@ -112,8 +104,6 @@ export const deleteMaintenance = (maintenanceID, callbacks = {}) => {
       }, callbacks)
       dispatch(removeMaintenance(maintenanceID))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }

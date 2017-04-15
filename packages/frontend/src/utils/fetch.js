@@ -33,7 +33,7 @@ export const sendRequest = async (url, params = {}, callbacks = {}) => {
   }
 
   const body = await receiveBody(resp)
-  if (onFailure && typeof onFailure === 'function') onFailure(body.errorMessage)
+  if (onFailure && typeof onFailure === 'function') onFailure('This is read-only demo')
   throw new HTTPError(body.errorMessage)
 }
 

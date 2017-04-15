@@ -2,7 +2,13 @@ import { Metrics } from 'model/metrics'
 
 export async function handle (event, context, callback) {
   try {
-    const externalMetrics = await new Metrics().listExternal(event.type)
+    let externalMetrics = await new Metrics().listExternal(event.type)
+    externalMetrics = externalMetrics.filter((metric) => {
+      return metric.Dimensions.reduce((prev, dim) => {
+        return prev || dim.Value.includes('demo') || dim.Value.includes('Demo')
+      }, false)
+    })
+    externalMetrics.reverse()
     callback(null, JSON.stringify(externalMetrics))
   } catch (error) {
     console.log(error.message)

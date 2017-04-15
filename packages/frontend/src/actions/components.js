@@ -41,8 +41,6 @@ export const fetchComponents = (callbacks = {}) => {
       const json = await sendRequest(apiURL + 'components', {}, callbacks)
       dispatch(listComponents(json))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }
@@ -58,8 +56,6 @@ export const postComponent = (name, description, status, callbacks = {}) => {
       }, callbacks)
       dispatch(addComponent(json))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }
@@ -75,8 +71,6 @@ export const updateComponent = (componentID, name, description, status, callback
       }, callbacks)
       dispatch(editComponent(json))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }
@@ -90,8 +84,6 @@ export const deleteComponent = (componentID, callbacks = {}) => {
       }, callbacks)
       dispatch(removeComponent(componentID))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }

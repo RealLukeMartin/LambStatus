@@ -50,8 +50,6 @@ export const fetchIncidents = (callbacks = {}) => {
       const json = await sendRequest(apiURL + 'incidents', {}, callbacks)
       dispatch(listIncidents(json))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }
@@ -62,8 +60,6 @@ export const fetchIncidentUpdates = (incidentID, callbacks = {}) => {
       const json = await sendRequest(apiURL + 'incidents/' + incidentID + '/incidentupdates', {}, callbacks)
       dispatch(listIncidentUpdates(json, incidentID))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }
@@ -84,8 +80,6 @@ export const postIncident = (name, incidentStatus, message, components, callback
       }, callbacks)
       dispatch(addIncident(json))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }
@@ -106,8 +100,6 @@ export const updateIncident = (incidentID, name, incidentStatus, message, compon
       }, callbacks)
       dispatch(editIncident(json))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }
@@ -121,8 +113,6 @@ export const deleteIncident = (incidentID, callbacks = {}) => {
       }, callbacks)
       dispatch(removeIncident(incidentID))
     } catch (error) {
-      console.error(error.message)
-      console.error(error.stack)
     }
   }
 }
