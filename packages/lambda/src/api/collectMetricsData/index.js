@@ -1,6 +1,26 @@
 import { Metrics, MetricsData } from 'model/metrics'
+import https from 'https'
+
+const dummyAPICall = () => {
+  return new Promise((resolve, reject) => {
+    https.get('https://kagxah0tee.execute-api.ap-northeast-1.amazonaws.com/prod/components', (resp) => {
+      let body = ''
+      resp.on('data', (d) => {
+        body += d
+      })
+      resp.on('end', () => {
+        resolve(body)
+      })
+    }).on('error', (e) => {
+      reject(e.message)
+    })
+  })
+}
 
 export async function handle (event, context, callback) {
+  // Continuously access API Gateway to generate demo data.
+  await dummyAPICall()
+
   try {
     const metrics = await new Metrics().list()
     await Promise.all(metrics.map(async (metric) => {

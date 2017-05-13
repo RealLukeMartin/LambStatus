@@ -1935,9 +1935,7 @@ Resources:
       ResourceId:
         Ref: "ExternalMetricsApiResource"
       HttpMethod: "GET"
-      AuthorizationType: "COGNITO_USER_POOLS"
-      AuthorizerId:
-        Ref: "Authorizer"
+      AuthorizationType: "NONE"
       ApiKeyRequired: false
       RequestParameters:
         method.request.querystring.type: false
@@ -2090,9 +2088,7 @@ Resources:
       ResourceId:
         Ref: "MetricsApiResource"
       HttpMethod: "GET"
-      AuthorizationType: "COGNITO_USER_POOLS"
-      AuthorizerId:
-        Ref: "Authorizer"
+      AuthorizationType: "NONE"
       ApiKeyRequired: false
       Integration:
         Type: "AWS"
@@ -2389,9 +2385,7 @@ Resources:
       ResourceId:
         Ref: "SettingsApiResource"
       HttpMethod: "GET"
-      AuthorizationType: "COGNITO_USER_POOLS"
-      AuthorizerId:
-        Ref: "Authorizer"
+      AuthorizationType: "NONE"
       ApiKeyRequired: false
       Integration:
         Type: "AWS"
