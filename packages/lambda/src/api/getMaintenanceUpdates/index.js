@@ -6,12 +6,12 @@ export async function handle (event, context, callback) {
     const maintenance = await maintenances.lookup(event.params.maintenanceid)
     let maintenanceUpdates = await maintenance.getMaintenanceUpdates()
 
-    // Show the maintenances as if will happen tomorrow.
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    const tomorrowDate = tomorrow.toISOString().replace(/T[0-9:.]+Z$/, '')
+    // Show the incidents as if the incident has happened yesterday.
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+    const yesterdayDate = yesterday.toISOString().replace(/T[0-9:.]+Z$/, '')
     maintenanceUpdates = maintenanceUpdates.map(maintenanceUpdate => {
-      maintenanceUpdate.updatedAt = tomorrowDate + maintenanceUpdate.updatedAt.replace(/^[0-9-]+/, '')
+      maintenanceUpdate.updatedAt = yesterdayDate + maintenanceUpdate.updatedAt.replace(/^[0-9-]+/, '')
       return maintenanceUpdate
     })
     callback(null, JSON.stringify(maintenanceUpdates))
