@@ -52,7 +52,7 @@ export const postComponent = (name, description, status, callbacks = {}) => {
     try {
       const body = { name, description, status }
       const json = await sendRequest(apiURL + 'components', {
-        headers: buildHeaders(),
+        headers: await buildHeaders(),
         method: 'POST',
         body: JSON.stringify(body)
       }, callbacks)
@@ -64,12 +64,12 @@ export const postComponent = (name, description, status, callbacks = {}) => {
   }
 }
 
-export const updateComponent = (componentID, name, description, status, callbacks = {}) => {
+export const updateComponent = (componentID, name, description, status, order, callbacks = {}) => {
   return async dispatch => {
     try {
-      const body = { name, description, status }
+      const body = { name, description, status, order }
       const json = await sendRequest(apiURL + 'components/' + componentID, {
-        headers: buildHeaders(),
+        headers: await buildHeaders(),
         method: 'PATCH',
         body: JSON.stringify(body)
       }, callbacks)
@@ -85,7 +85,7 @@ export const deleteComponent = (componentID, callbacks = {}) => {
   return async dispatch => {
     try {
       await sendRequest(apiURL + 'components/' + componentID, {
-        headers: buildHeaders(),
+        headers: await buildHeaders(),
         method: 'DELETE'
       }, callbacks)
       dispatch(removeComponent(componentID))

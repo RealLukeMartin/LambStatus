@@ -1,9 +1,8 @@
 import React, { PropTypes } from 'react'
 import classnames from 'classnames'
 import c3 from 'c3'
-import moment from 'moment-timezone'
 import 'c3/c3.css'
-import { timeframes, getXAxisFormat, getTooltipTitleFormat, getFlushFunc, getNumDates } from 'utils/status'
+import { timeframes, getXAxisFormat, getTooltipTitleFormat, getIncrementTimestampFunc, getNumDates } from 'utils/status'
 import classes from './MetricsGraph.scss'
 import './MetricsGraph.global.scss'
 
@@ -22,61 +21,88 @@ export default class MetricsGraph extends React.Component {
     fetchData: PropTypes.func.isRequired
   }
 
+  constructor (props) {
+    super(props)
+    this.state = {
+      needUpdateGraph: false
+    }
+  }
+
   componentDidMount () {
-    if (this.props.settings.statusPageURL) {
-      this.fetchMetricData()
+    if (this.areAllDataFetched(this.props.metric.data)) {
+      // The chart width is wrong if update the graph here. Let componentDidUpdate update it instead.
+      this.setState({needUpdateGraph: true})
+      return
     }
 
-    if (this.props.metric.data) {
-      this.updateGraph()
+    if (this.props.settings.statusPageURL) {
+      this.fetchMetricData()
     }
   }
 
   componentDidUpdate (prevProps, prevState) {
     if (!prevProps.settings.statusPageURL && this.props.settings.statusPageURL) {
-      // On componentDidMount, url was unknown. So fetch the data now.
+      // When componentDidMount was called, url was unknown. So fetch the data now.
       this.fetchMetricData()
       return
     }
 
-    if (!this.props.metric.data) {
-      // now fetching...
+    if (this.areAllDataFetched(this.props.metric.data)) {
+      // all data were fetched. Just update the graph.
+      this.updateGraph()
       return
     }
 
     if (prevProps.timeframe !== this.props.timeframe) {
       this.fetchMetricData()
-    }
-
-    if (prevProps.metric.data !== this.props.metric.data ||
-      prevProps.timeframe !== this.props.timeframe) {
-      this.updateGraph()
+      return
     }
   }
 
   fetchMetricData = () => {
     const numDates = getNumDates(this.props.timeframe)
     const currDate = new Date()
-    currDate.setTime(currDate.getTime() + currDate.getTimezoneOffset() * 60 * 1000)  // UTC
     for (let i = 0; i < numDates + 1; i++) {
-      this.props.fetchData(this.props.settings.statusPageURL, this.props.metricID, currDate.getFullYear(),
-        currDate.getMonth() + 1, currDate.getDate())
+      this.props.fetchData(this.props.settings.statusPageURL, this.props.metricID, currDate.getUTCFullYear(),
+        currDate.getUTCMonth() + 1, currDate.getUTCDate())
       currDate.setDate(currDate.getDate() - 1)
     }
   }
 
+  areAllDataFetched = (data) => {
+    if (!data) {
+      return false
+    }
+
+    let currDate = new Date()
+    const numDates = getNumDates(this.props.timeframe)
+    for (let i = 0; i < numDates + 1; i++) {
+      const date = `${currDate.getUTCFullYear()}-${currDate.getUTCMonth() + 1}-${currDate.getUTCDate()}`
+      if (!data[date]) { return false }
+      currDate.setDate(currDate.getDate() - 1)
+    }
+    return true
+  }
+
   updateGraph = () => {
     const numDates = getNumDates(this.props.timeframe)
-    const currDate = new Date()
+    let now = new Date()
+    let currDate = new Date(now.getTime())
     const endDateStr = currDate.toISOString()
     currDate.setDate(currDate.getDate() - numDates)
     const beginDateStr = currDate.toISOString()
 
-    currDate.setTime(currDate.getTime() + currDate.getTimezoneOffset() * 60 * 1000)  // UTC
     const data = []
     for (let i = 0; i < numDates + 1; i++) {
-      const date = `${currDate.getFullYear()}-${currDate.getMonth() + 1}-${currDate.getDate()}`
-      Array.prototype.push.apply(data, this.props.metric.data[date])
+      const date = `${currDate.getUTCFullYear()}-${currDate.getUTCMonth() + 1}-${currDate.getUTCDate()}`
+      if (this.props.metric.data[date]) {
+        this.props.metric.data[date].forEach(dataPoint => {
+          if (beginDateStr > dataPoint.timestamp || dataPoint.timestamp > endDateStr) {
+            return
+          }
+          data.push(dataPoint)
+        })
+      }
 
       currDate.setDate(currDate.getDate() + 1)
     }
@@ -86,38 +112,34 @@ export default class MetricsGraph extends React.Component {
 
     const timestamps = []
     const values = []
-    let minValue = data[data.length - 1].value
-    let maxValue = minValue
-    const needFlush = getFlushFunc(this.props.timeframe)
-    let sum = 0
-    let count = 0
-    let currTimestamp
-    for (let i = 0; i < data.length; i++) {
-      if (beginDateStr > data[i].timestamp || data[i].timestamp > endDateStr) {
-        continue
-      }
+    let minValue, maxValue
+    currDate = new Date(now.getTime())
+    currDate.setDate(currDate.getDate() - numDates)
+    let currIndex = 0
+    const incrementTimestamp = getIncrementTimestampFunc(this.props.timeframe)
+    // eslint-disable-next-line no-unmodified-loop-condition
+    while (currDate <= now) {
+      timestamps.push(new Date(currDate.getTime()))
 
-      if (minValue > data[i].value) minValue = data[i].value
-      if (maxValue < data[i].value) maxValue = data[i].value
-      if (!currTimestamp) currTimestamp = data[i].timestamp
-
-      if (needFlush(currTimestamp, data[i].timestamp)) {
-        const timestamp = moment.tz(currTimestamp, 'UTC').tz(moment.tz.guess())
-        timestamps.push(timestamp.toDate())
-        values.push(sum / count)
-
-        currTimestamp = data[i].timestamp
-        sum = data[i].value
-        count = 1
-      } else {
-        sum += data[i].value
+      const currDateStr = currDate.toISOString()
+      let sum = 0
+      let count = 0
+      while (data[currIndex] && data[currIndex].timestamp <= currDateStr) {
+        sum += data[currIndex].value
         count++
+        currIndex++
       }
-    }
-    if (currTimestamp) {
-      const timestamp = moment.tz(currTimestamp, 'UTC').tz(moment.tz.guess())
-      timestamps.push(timestamp.toDate())
-      values.push(sum / count)
+
+      if (count !== 0) {
+        const avg = sum / count
+        values.push(avg)
+        if (minValue === undefined || minValue > avg) minValue = avg
+        if (maxValue === undefined || maxValue < avg) maxValue = avg
+      } else {
+        values.push(null)
+      }
+
+      incrementTimestamp(currDate)
     }
 
     const ceil = (rawValue) => {
@@ -150,7 +172,13 @@ export default class MetricsGraph extends React.Component {
         ]
       },
       point: {
-        show: false
+        show: true,
+        r: 1,
+        focus: {
+          expand: {
+            r: 2.5
+          }
+        }
       },
       axis: {
         x: {
@@ -216,15 +244,22 @@ export default class MetricsGraph extends React.Component {
       return false
     }
 
-    return Object.keys(this.props.metric.data).reduce((prev, key) => {
-      return prev || (this.props.metric.data[key].length !== 0)
-    }, false)
+    let currDate = new Date()
+    const numDates = getNumDates(this.props.timeframe)
+    for (let i = 0; i < numDates + 1; i++) {
+      const date = `${currDate.getUTCFullYear()}-${currDate.getUTCMonth() + 1}-${currDate.getUTCDate()}`
+      if (this.props.metric.data[date] && this.props.metric.data[date].length !== 0) {
+        return true
+      }
+      currDate.setDate(currDate.getDate() - 1)
+    }
+    return false
   }
 
   render () {
     let graph = (<div className={classnames(classes.loading)} >Fetching...</div>)
     let average = 0
-    if (this.props.metric.data) {
+    if (this.areAllDataFetched(this.props.metric.data)) {
       if (!this.hasDatapoints()) {
         graph = (<div className={classnames(classes.loading)} >No data for this time period yet.</div>)
       } else {

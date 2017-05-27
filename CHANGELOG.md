@@ -1,5 +1,15 @@
 # Change Log
 
+## [v0.3.1](https://github.com/ks888/LambStatus/tree/v0.3.1) (2017-05-27)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.3.0...v0.3.1)
+
+
+
+- Support dot-type S3 website endpoints [\#35](https://github.com/ks888/LambStatus/pull/35) ([ks888](https://github.com/ks888))
+- Improve the appearance of the metrics chart [\#34](https://github.com/ks888/LambStatus/pull/34) ([ks888](https://github.com/ks888))
+- Add UI to change the order of components and metrics [\#30](https://github.com/ks888/LambStatus/pull/30) ([ks888](https://github.com/ks888))
+- Show 404 message if the path does not match any [\#27](https://github.com/ks888/LambStatus/pull/27) ([ks888](https://github.com/ks888))
+
 ## [v0.3.0](https://github.com/ks888/LambStatus/tree/v0.3.0) (2017-05-09)
 [Full Changelog](https://github.com/ks888/LambStatus/compare/v0.2.1...v0.3.0)
 
@@ -11,15 +21,15 @@
 - Auto-deploy APIGateway on updating the stack [\#23](https://github.com/ks888/LambStatus/pull/23) ([ks888](https://github.com/ks888))
 
 ## [v0.2.1](https://github.com/ks888/LambStatus/tree/v0.2.1) (2017-04-11)
-[Full Changelog](https://github.com/ks888/LambStatus/compare/v2.0.0...v0.2.1)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.2.0...v0.2.1)
 
 
 
 - Show tooltip to tell the meaning of the item color [\#21](https://github.com/ks888/LambStatus/pull/21) ([ks888](https://github.com/ks888))
 - Support scheduled maintenance [\#19](https://github.com/ks888/LambStatus/pull/19) ([ks888](https://github.com/ks888))
 
-## [v2.0.0](https://github.com/ks888/LambStatus/tree/v2.0.0) (2017-03-07)
-[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.1.3...v2.0.0)
+## [v0.2.0](https://github.com/ks888/LambStatus/tree/v0.2.0) (2017-03-07)
+[Full Changelog](https://github.com/ks888/LambStatus/compare/v0.1.3...v0.2.0)
 
 
 
